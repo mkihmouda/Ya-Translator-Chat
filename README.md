@@ -8,6 +8,7 @@
  
 # Ya-Translator-Chat
 
+
 Is the basics of chating functionality and scrolling handling for Ya-Translator App.
  
 ## Requirements
