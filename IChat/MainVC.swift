@@ -10,13 +10,17 @@ import UIKit
 
 class MainVC: UIViewController {
 
-
+    // IBOutlet variables
+    
     @IBOutlet var scrollView: UIScrollView! // scrollView
-    @IBOutlet var mainView: MainView!
+    @IBOutlet var mainView: MainView! // mainView
     
-    
-     var listScrollModel : ListScrollModel! // scrollView model to handle scroll issues
+    //  variables
+
+    var listScrollModel : ListScrollModel! // scrollView model to handle all scrolling functionalities
  
+    
+// MARK: override UIViewController methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,15 +31,19 @@ class MainVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
+        //  load subviews
+ 
         loadSubViews()
         
     }
+
     
+// MARK: load subViews
+   
     func loadSubViews(){
         
         mainView.loadViews()
-    
-     
+
     }
 
  

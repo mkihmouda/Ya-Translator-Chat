@@ -10,16 +10,28 @@ import UIKit
 
 class MainView: UIView {
 
-    var chatView : ChatView!
-
-   
+    
     func loadViews(){
-       
+    
+       let chatView : ChatView =  Bundle.instantiateNib(owner: nil)
         
-        chatView = Bundle.main.loadNibNamed("ChatView", owner: nil, options: nil)![0] as! ChatView
-        chatView.frame.origin =  CGPoint(x: 25,y : screenHeight - 70)
-        chatView.frame.size = CGSize(width: screenWidth - 50 , height: 70)
+        chatView.frame.origin =  CGPoint(x: chatViewPadding,y : screenHeight - chatViewHeight)
+        chatView.frame.size = CGSize(width: screenWidth - chatViewPadding * 2 , height: chatViewHeight)
+        
         self.addSubview(chatView)
+    }
 
+}
+
+
+
+// MARK: load instance from Bundle Extension
+
+extension Bundle {
+    class func instantiateNib<T>(owner: AnyObject? = nil) -> T {
+        guard let instance = Bundle.main.loadNibNamed(String(describing: T.self), owner: owner)?.first as? T else {
+            fatalError("Could not instantiate from nib: \(T.self)")
+        }
+        return instance
     }
 }

@@ -20,6 +20,10 @@ let screenWidth = UIScreen.main.bounds.size.width
 let roundedPadding : CGFloat = 10.0
 let chatTextViewPadding : CGFloat = 10.0
 
+let chatViewHeight : CGFloat = 70.0
+let chatViewPadding : CGFloat = 25.0
+
+
 // Scroll View padding
 
 let scrollViewPaddingHeight : CGFloat = 10.0

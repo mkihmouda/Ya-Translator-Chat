@@ -12,27 +12,29 @@ class MessageView: UIView {
 
     // enum Sender or Receiver
     
-    enum sendingType {
-        
-        case sender
-        case receiver
-    }
-    
-    
+    enum sendingType { case sender, receiver}
+ 
     @IBOutlet var postTextView: UITextView!
     @IBOutlet var ballonImageView: UIImageView!
     
     var senderType : sendingType?
  
 
-// MARK: updateMessgeView according to text content
+// MARK: set text and updateMessgeView according to content
     
+        func setMessageText(text: String){
     
+            self.postTextView.text = text
+            self.updateTextViewFrame()
+ 
+        }
+    
+ 
         func updateTextViewFrame(){
      
             let contentSize = self.postTextView.sizeThatFits(self.postTextView.bounds.size)
             
-            if (senderType == sendingType.sender){
+            if (senderType == .sender){
                 
                 // right alignment
 
@@ -57,7 +59,7 @@ class MessageView: UIView {
              self.addAvatar()
         }
     
-  
+    
     func addMessageBallon(){
         
         if let senderOrReceiver = senderType {
@@ -78,7 +80,7 @@ class MessageView: UIView {
             let imageView = UIImageView.init(image: image)
             
         
-        if (senderType == sendingType.sender){
+        if (senderType == .sender){
             
             imageView.frame = CGRect(x: 10, y: self.frame.size.height - 30 , width: 30 , height: 30)
             
@@ -89,11 +91,24 @@ class MessageView: UIView {
         }
         
         
-        imageView.layer.cornerRadius = imageView.frame.size.width/2
-        self.clipsToBounds = true
+        imageView.makeRounded()
         self.addSubview(imageView)
             
         }
     }
     
 }
+
+
+extension UIImageView {
+    
+    func makeRounded(){
+   
+        self.layer.cornerRadius = self.frame.width/2
+        self.clipsToBounds = true
+    
+    }
+  
+}
+
+ 

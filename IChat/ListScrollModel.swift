@@ -16,9 +16,7 @@ class ListScrollModel{
     var scrollViewAccumulativeHeight : CGFloat = 0.0 // Acc. Height
     var mainVC : MainVC! // parent VC
 
-    
-    
-    
+  
     init(scrollView : UIScrollView) {
         
         self.scrollView = scrollView
@@ -28,8 +26,7 @@ class ListScrollModel{
         
     }
     
-// MARK: Root View Controller
-    
+ 
     func getRootViewController(){
         
        let appDelegate  = UIApplication.shared.delegate as! AppDelegate
@@ -37,21 +34,23 @@ class ListScrollModel{
         
     }
     
+    
 // MARK: add Sender and Receiver to list Scroll
     
     
     func addMessage(view : UIView, keyboardHeigh : CGFloat){
         
  
-        view.frame.origin = CGPoint(x: 0 , y: scrollViewAccumulativeHeight)
+        view.frame.origin.y = scrollViewAccumulativeHeight
         self.scrollView.addSubview(view)
   
    
          scrollViewAccumulativeHeight = scrollViewAccumulativeHeight + view.frame.size.height + 5 // update Acc. height
          self.updateScrollContentHeight(keyboardHeigh : keyboardHeigh)
-        
-        
+  
      }
+ 
+    
  
 // MARK: update after keyboard shown and hidden
     
@@ -61,15 +60,20 @@ class ListScrollModel{
         
             UIView.animate(withDuration: 1.7 , delay: 0.0, options: [.curveEaseOut], animations: {
                 
-                self.scrollView.frame.size.height = screenHeight - self.scrollView.frame.size.height + keyboardHeigh - 70
-                self.scrollView.contentSize.height = self.scrollView.frame.size.height > self.scrollViewAccumulativeHeight ? self.scrollView.frame.size.height :  self.scrollViewAccumulativeHeight
+                
+                let newHieght = self.caluclateNewHeight(keyboardHeigh : keyboardHeigh)
+                
+                self.scrollView.frame.size.height = newHieght
+                self.scrollView.contentSize.height = newHieght > self.scrollViewAccumulativeHeight ? newHieght :  self.scrollViewAccumulativeHeight
+                
                 self.scrollView.contentOffset = CGPoint(x: 0, y: self.scrollView.contentSize.height - self.scrollView.bounds.size.height)
                 
 
             }, completion: nil)
         
     }
-    
+   
+
     
     func updateScrollWithHiddenKeyboard(keyboardHeigh : CGFloat){
         
@@ -83,6 +87,14 @@ class ListScrollModel{
        
         
     }
+    
+
+    func caluclateNewHeight(keyboardHeigh : CGFloat) -> CGFloat {
+        
+        return screenHeight - self.scrollView.frame.size.height + keyboardHeigh - chatViewHeight
+        
+    }
+    
     
     
 // MARK: update Scroll view data

@@ -24,8 +24,7 @@ class SoundPlayer {
             
             try  btnSound = AVAudioPlayer(contentsOf: soundURL as URL)
             btnSound?.prepareToPlay()
-                
-         
+
             
         } catch let err as NSError{
             

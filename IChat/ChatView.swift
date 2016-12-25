@@ -15,10 +15,10 @@ class ChatView: UIView, UITextViewDelegate  {
     @IBOutlet var roundedView: RoundedUIView! // rounded view
    
 
-    var resetFlag : Bool = false // reset falg
+    var significantChange : Bool = false // significant change falg
     var mainVC : MainVC! // parent VC
     
-    var offsetHeight : CGFloat = 0.0 // offset height
+    var textHeight : CGFloat = 0.0 // text height - to edit text view height for significant change in height
     var keyboardHeigh : CGFloat = 0.0 // keyboard height
     
     var btnSound : AVAudioPlayer?
@@ -27,45 +27,13 @@ class ChatView: UIView, UITextViewDelegate  {
     
     override func awakeFromNib() {
    
-        // get root VC
-        
         self.getRootViewController()
-        
-        // Keyboard show and hide notifications
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(ChatView.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ChatView.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        self.keyboardMethods()
 
         self.textView.delegate = self
-       
+  
     }
     
-    
-// MARK: Tap end editing
-    
-    override func layoutSubviews() {
-        
-        // Tap endEditing
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapAction(_:)))
-        self.mainVC.scrollView.addGestureRecognizer(tapGesture)
- 
-    }
-    
- 
-    
-    
-    func tapAction(_ sender: UITapGestureRecognizer) {
-      
-        self.textView.endEditing(true)
-        mainVC.listScrollModel.updateScrollWithHiddenKeyboard(keyboardHeigh: keyboardHeigh)  // reset scroll view frame size
-        endEditing()
-        
-    }
-    
-    
-
-// MARK: Root View Controller
     
     func getRootViewController(){
         
@@ -74,10 +42,35 @@ class ChatView: UIView, UITextViewDelegate  {
         
     }
     
+ 
+    
+// MARK: keyboard methods and notifications
+   
+    
+    func keyboardMethods(){
+    
+        // Keyboard show and hide notifications
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(ChatView.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ChatView.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+         // Gesture tap definition
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapAction(_:)))
+        self.mainVC.mainView.addGestureRecognizer(tapGesture)
+ 
+    }
+ 
+    func tapAction(_ sender: UITapGestureRecognizer) {
+      
+        self.textView.endEditing(true)
+        mainVC.listScrollModel.updateScrollWithHiddenKeyboard(keyboardHeigh: keyboardHeigh)  // reset scroll view frame size
+        endEditing()
+        
+    }
+    
 
-// MARK: Keyboard shown and hidden methods
-    
-    
+// MARK: Keyboard methods
     
     func keyboardWillShow(notification: Notification) {
      
@@ -106,10 +99,17 @@ class ChatView: UIView, UITextViewDelegate  {
         
     }
     
+
+    func endEditing(){
+        
+        self.textView.text = ""
+        self.keyboardHeigh  = 0.0
+        
+        significantChange = true
+        updateTextViewFrame()
+        
+    }
     
-    
-    
-// MARK: handle text typing
     
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -125,6 +125,7 @@ class ChatView: UIView, UITextViewDelegate  {
         return true
     }
     
+
     
 // MARK: update TextView and frames size
     
@@ -132,83 +133,75 @@ class ChatView: UIView, UITextViewDelegate  {
         
         let contentSize = self.textView.sizeThatFits(self.textView.bounds.size) // fit textview size according to content
         
-        if (contentSize.height != offsetHeight || resetFlag){ // update only if new line or in reset state
+        if (contentSize.height != textHeight || significantChange){ // update only if new line or significant Change
+  
+            updateHeight(contentSize: contentSize) // update with new height
             
-            offsetHeight = contentSize.height
-            
-            // update frames height values
-            
-            self.frame.size.height =  contentSize.height + roundedPadding * 2 + chatTextViewPadding * 2
-            self.roundedView.frame.size.height =  contentSize.height + roundedPadding * 2 + chatTextViewPadding * 2
-            
-            self.textView.frame.size.height =  contentSize.height
-            self.textView.contentSize.height =  contentSize.height
-                        
             UIView.animate(withDuration: 0.5 , delay: 0.0, options: [.curveEaseOut], animations: {
                 
                 self.frame.origin.y =  screenHeight - self.keyboardHeigh - self.frame.size.height // animate TextView to top
-                self.resetFlag = false
+                self.significantChange = false
 
             }, completion: nil)
         }
     }
-   
-    
 
+    
+    func updateHeight(contentSize : CGSize){
+ 
+        let newHeight = contentSize.height + roundedPadding * 2 + chatTextViewPadding * 2
+        textHeight = contentSize.height
+
+        self.frame.size.height =  newHeight
+        self.roundedView.frame.size.height =  newHeight
+        
+        self.textView.frame.size.height =  textHeight
+        self.textView.contentSize.height =  textHeight
+
+    }
+
+    
+    
+    
 // MARK: send message button action
 
     
     @IBAction func sendMessage(_ sender: Any) {
         
-        playSiriSound(fileName: "message")
+        let messageView : MessageView =  Bundle.instantiateNib(owner: nil)
 
-        let messageView = Bundle.main.loadNibNamed("MessageView", owner: nil, options: nil)![0] as! MessageView
-        messageView.postTextView.text = textView.text
         messageView.senderType = messageDirection()
-        messageView.updateTextViewFrame()
+        messageView.setMessageText(text: textView.text)
         mainVC.listScrollModel.addMessage(view: messageView, keyboardHeigh: keyboardHeigh)
         
-        postSendMessage() // post submit chat process
+        postSendMessage() // post submitting message
     }
 
     
     func postSendMessage(){
     
+        playSiriSound(fileName: "message")
         textView.text = "" // clear textView
         updateTextViewFrame()
     }
     
-    
-    
-// MARK: end edting process
-    
-    func endEditing(){
+ 
 
-        self.keyboardHeigh  = 0.0
-        self.textView.text = ""
-        
-        resetFlag = true
-        updateTextViewFrame()
-  
-    }
     
 // MARK: message number
     
     
     func messageDirection() -> MessageView.sendingType{
     
-        let views = mainVC.scrollView.subviews.count
+        let views = mainVC.scrollView.subviews.filter{$0.tag != 1}.count // get subviews #
         
-        
-        if  (views - 2) % 2 == 1{
-        
- 
-            return MessageView.sendingType.sender
-        
+        if  views.messageDirection == 1 {
+            
+            return .sender
         }
         
-        return MessageView.sendingType.receiver
- 
+        return .receiver
+
     }
     
     
@@ -236,5 +229,13 @@ class ChatView: UIView, UITextViewDelegate  {
         }
         
     }
+    
+}
+
+
+extension Int {
+    
+    var messageDirection: Int { return (self - 1) % 2 }
+
     
 }
