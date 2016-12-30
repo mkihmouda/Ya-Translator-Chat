@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/cocoapods/l/ParallaxView.svg)](https://github.com/PGSSoft/ParallaxView/LICENSE.md)
 
 
-"Ya-Translator" YaTranslator is amazing handheld translator tool, which allows you to communicate effectively globally. With YaTranslator you instantly speak 48 languages and more than 58 in written conversations. Feel free to download the [APP](https://itunes.apple.com/us/app/iweather-fc/id1178484560?mt=8) from APP Store.
+"Ya-Translator" YaTranslator is amazing handheld translator tool, which allows you to communicate effectively globally. With YaTranslator you instantly speak 48 languages and more than 58 in written conversations. Feel free to download the [APP](https://itunes.apple.com/us/app/ya-translator/id1188700401?mt=8) from APP Store.
  
 # Ya-Translator-Chat
 
@@ -76,5 +76,5 @@ The project is available as open source under the terms of the [MIT License](htt
 ## About
 
 The project maintained by [GPH], [IOS and MAC Softwares]
-See our other [open-source projects](https://itunes.apple.com/us/app/iweather-fc/id1178484560?mt=8), [download_our_app](https://itunes.apple.com/us/app/iweather-fc/id1178484560?mt=8) or [contact us ](https://twitter.com/MIhmouda).
+See our other [open-source projects](https://itunes.apple.com/us/app/iweather-fc/id1178484560?mt=8), [download_our_app](https://itunes.apple.com/us/app/ya-translator/id1188700401?mt=8) or [contact us ](https://twitter.com/MIhmouda).
 
